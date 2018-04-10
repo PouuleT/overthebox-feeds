@@ -7,10 +7,10 @@ PKG_RELEASE:=6
 include $(INCLUDE_DIR)/package.mk
 
 MY_DEPENDS := \
-    fuse-utils luci-app-samba samba36-server \
+    fuse-utils samba36-server \
     rsync netcat TARGET_x86_64:svfs vim-full htop \
     iputils-ping bmon ethtool sysstat pciutils \
-    mini_snmpd openvpn-openssl luci-app-openvpn \
+    mini_snmpd openvpn-openssl \
     gdb
 
 define Package/$(PKG_NAME)
