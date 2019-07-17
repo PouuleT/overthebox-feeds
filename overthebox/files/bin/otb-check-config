@@ -119,5 +119,22 @@ glorytun path | dd obs=1M 2>/dev/null | while read -r _ _ _ IP _; do
 	esac
 done
 
+# Change the source for the tun0 default route so that it comes with its LAN IP
+if [ "$(uci -q get "network.tun0_default_route")" != route ]; then
+	otb_info "setup missing tun0 route"
+	uci -q batch <<-EOF
+	set network.tun0_default_route=route
+	set network.tun0_default_route.interface=tun0
+	set network.tun0_default_route.target=0.0.0.0/0
+	set network.tun0_default_route.table=100
+	EOF
+fi
+
+lan_ip=$(uci -q get "network.lan.ipaddr")
+if [ "$(uci -q get "network.tun0_default_route.source")" != "$lan_ip" ]; then
+	otb_info "setup tun0 default route to $lan_ip"
+	uci -q set "network.tun0_default_route.source=$lan_ip"
+fi
+
 uci -q commit firewall
 uci -q commit network
