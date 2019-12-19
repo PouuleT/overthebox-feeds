@@ -1,4 +1,5 @@
 #!/bin/sh
+# vim: set noexpandtab tabstop=4 shiftwidth=4 softtabstop=4 :
 
 set -e
 
@@ -39,6 +40,17 @@ _graph() {
 			;;
 		esac
 	done < /proc/meminfo
+
+	for iface_path in /tmp/otb-data/*; do
+		iface=$(basename "$iface_path")
+
+		if_connectivity=0
+		[ "$(cat "$iface_path/connectivity")" = "OK" ] && if_connectivity=1
+		_add "overthebox.net.connectivity" "${if_connectivity}" ',"iface":"'"${iface}"'"'
+
+		if_latency=$(cat "$iface_path/latency")
+		[ -n "$if_latency" ] && _add "overthebox.net.latency" "${if_latency}" ',"iface":"'"${iface}"'"'
+	done
 
 	printf ']'
 }
